@@ -1,12 +1,38 @@
 #include <iostream>
 #include <string>
+#include <numeric>
 #include "Day01.h"
 
 
 std::vector<std::string> Day01::run(std::ifstream &input) {
     std::vector<std::string> out;
-    out.push_back("Hello");
-    input.clear(); input.seekg(0);
-    out.push_back("world");
+    auto res = getMaxElf(input, 3);
+    out.push_back(std::to_string(res.front().second));
+    auto total = std::accumulate(res.begin(), res.end(), 0, [&](int a, std::pair<unsigned int,unsigned int> b){return a + b.second;});
+    out.push_back(std::to_string(total));
     return out;
+}
+
+
+std::list<std::pair<unsigned int,unsigned int>> Day01::getMaxElf(std::istream &input, unsigned int elves) {
+    std::list<std::pair<unsigned int,unsigned int>> maximums{elves, {0,0}};
+    unsigned int running_total = 0;
+    unsigned int current_elf = 0;
+    for(std::string read_string; std::getline(input, read_string); ) {
+        if (read_string.empty()) {
+            for( auto itr = maximums.begin(); itr != maximums.end(); itr++ ) {
+                if(running_total > itr->second) {
+                    maximums.insert(itr, std::make_pair(current_elf,running_total));
+                    maximums.pop_back();
+                    break;
+                }
+            }
+            current_elf++;
+            running_total = 0;
+        }
+        else {
+            running_total += std::stoul(read_string);
+        }
+    }
+    return maximums;
 }
