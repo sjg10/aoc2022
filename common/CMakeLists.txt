@@ -1,0 +1,6 @@
+file(GLOB _libs *)
+foreach(_lib ${_libs})
+    if(IS_DIRECTORY ${_lib})
+        add_subdirectory(${_lib})
+    endif()
+endforeach()
