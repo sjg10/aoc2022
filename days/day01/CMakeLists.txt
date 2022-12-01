@@ -1,7 +1,7 @@
 add_library(day01 STATIC
     src/Day01.cpp
 )
-target_include_directories(day1 BEFORE
+target_include_directories(day01 BEFORE
     PUBLIC include
 )
 target_link_libraries(
@@ -10,12 +10,12 @@ target_link_libraries(
 )
 
 add_executable(
-  day1_test
+  day01_test
   tests/test.cpp
 )
 
 target_link_libraries(
-  day1_test
+  day01_test
   gtest gtest_main day01
 )
 
