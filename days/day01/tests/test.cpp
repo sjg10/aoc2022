@@ -18,13 +18,15 @@ TEST(Day01Test, Part1Part2) {
     in << "\n";
     in << "10000\n";
     auto maximum = Day01::getMaxElf(in);
-    ASSERT_EQ(maximum[0].first, 3);
-    ASSERT_EQ(maximum[0].second, 24000);
+    ASSERT_EQ(maximum.front().first, 3);
+    ASSERT_EQ(maximum.front().second, 24000);
+    in.clear(); in.seekg(0);
     auto maximums = Day01::getMaxElf(in, 3);
-    ASSERT_EQ(maximum[0].first, 3);
-    ASSERT_EQ(maximum[0].second, 24000);
-    ASSERT_EQ(maximum[1].first, 2);
-    ASSERT_EQ(maximum[1].second, 11000);
-    ASSERT_EQ(maximum[2].first, 4);
-    ASSERT_EQ(maximum[2].second, 10000);
+    ASSERT_EQ(maximums.size(), 3);
+    std::vector<std::pair<unsigned int, unsigned int>> exp_maxs = {{3, 24000}, {2, 11000}, {4,10000}};
+    unsigned int idx;
+    for( auto itr = maximums.begin(); itr != maximums.end(); itr++, idx++) {
+        SCOPED_TRACE(idx);
+        ASSERT_EQ(*itr,exp_maxs[idx]);
+    }
 }
