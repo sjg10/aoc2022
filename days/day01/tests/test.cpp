@@ -24,7 +24,7 @@ TEST(Day01Test, Part1Part2) {
     auto maximums = Day01::getMaxElf(in, 3);
     ASSERT_EQ(maximums.size(), 3);
     std::vector<std::pair<unsigned int, unsigned int>> exp_maxs = {{3, 24000}, {2, 11000}, {4,10000}};
-    unsigned int idx;
+    unsigned int idx = 0;
     for( auto itr = maximums.begin(); itr != maximums.end(); itr++, idx++) {
         SCOPED_TRACE(idx);
         ASSERT_EQ(*itr,exp_maxs[idx]);
