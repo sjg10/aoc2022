@@ -1,6 +1,7 @@
 #include <memory>
 #include <map>
 #include "Day01.h"
+#include "Day02.h"
 //Further day includes go here
 #include <iostream>
 
@@ -8,6 +9,7 @@
 /** Register of days to run */
 std::vector<std::pair<std::string, std::shared_ptr<Day>>> days = {
     {"Day01", std::make_shared<Day01>("../res/day01.txt")},
+    {"Day02", std::make_shared<Day02>("../res/day02.txt")},
     //Further days go here
 };
 
