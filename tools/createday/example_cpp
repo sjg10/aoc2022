@@ -1,0 +1,14 @@
+#include <iostream>
+#include <string>
+#include <numeric>
+#include "DayEXAMPLEDAY.h"
+
+
+std::vector<std::string> DayEXAMPLEDAY::run(std::ifstream &input) {
+    std::vector<std::string> out;
+    std::string read_line;
+    getline(input, read_line);
+    out.push_back("hello world");
+    out.push_back(read_line);
+    return out;
+}

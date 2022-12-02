@@ -1,0 +1,22 @@
+#include <gtest/gtest.h>
+#include "DayEXAMPLEDAY.h"
+// Demonstrate some basic assertions for new class.
+TEST(DayEXAMPLEDAYTest, Part1Part2) {
+    std::stringstream in;
+    in << "1000\n";
+    in << "2000\n";
+    in << "3000\n";
+    in << "\n";
+    in << "4000\n";
+    in << "\n";
+    in << "5000\n";
+    in << "6000\n";
+    in << "\n";
+    in << "7000\n";
+    in << "8000\n";
+    in << "9000\n";
+    in << "\n";
+    in << "10000\n";
+    std::cout << "test NYI" << std::endl;
+    FAIL() << "test NYI" ;
+}

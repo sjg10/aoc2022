@@ -18,3 +18,7 @@ To run the tests run (from `build`):
 To run, add the resource files to `res/` and then run (from `build`)
 
     ./aoc2022
+
+## Tools
+
+Inside `tools/createday` run `createday.sh daynumber` e.g. `createday.sh 02` . This will create a folder day02 with all example files, and update the build chain for the new day.

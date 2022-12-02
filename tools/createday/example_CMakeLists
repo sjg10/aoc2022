@@ -1,0 +1,23 @@
+add_library(dayEXAMPLEDAY STATIC
+    src/DayEXAMPLEDAY.cpp
+)
+target_include_directories(dayEXAMPLEDAY BEFORE
+    PUBLIC include
+)
+target_link_libraries(
+  dayEXAMPLEDAY
+  day
+)
+
+add_executable(
+  dayEXAMPLEDAY_test
+  tests/test.cpp
+)
+
+target_link_libraries(
+  dayEXAMPLEDAY_test
+  gtest gtest_main dayEXAMPLEDAY
+)
+
+include(GoogleTest)
+gtest_discover_tests(dayEXAMPLEDAY_test)
