@@ -25,5 +25,6 @@ target_link_libraries(
     aoc2022
     day01
     day02
+    day03
     # Further days go here
 )
