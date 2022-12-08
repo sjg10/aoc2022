@@ -6,6 +6,8 @@
 #include "Day04.h"
 #include "Day05.h"
 #include "Day06.h"
+#include "Day07.h"
+#include "Day08.h"
 //Further day includes go here
 #include <iostream>
 
@@ -18,6 +20,8 @@ std::vector<std::pair<std::string, std::shared_ptr<Day>>> days = {
     {"Day04", std::make_shared<Day04>("../res/day04.txt")},
     {"Day05", std::make_shared<Day05>("../res/day05.txt")},
     {"Day06", std::make_shared<Day06>("../res/day06.txt")},
+    {"Day07", std::make_shared<Day07>("../res/day07.txt")},
+    {"Day08", std::make_shared<Day08>("../res/day08.txt")},
     //Further days go here
 };
 
