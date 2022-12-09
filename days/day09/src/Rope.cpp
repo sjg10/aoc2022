@@ -1,10 +1,10 @@
 #include "Rope.h"
-
+#include <cassert>
 
 void Rope::moveHead(std::string input) {
     char direction = input[0];
     unsigned int distance = std::stoul(input.substr(2));
-    int * val;
+    int * val = nullptr;
     int mult;
     switch (direction) {
         case 'R':
@@ -22,6 +22,9 @@ void Rope::moveHead(std::string input) {
         case 'D':
             val = &knots.front().second;
             mult = -1;
+            break;
+        default:
+            assert(false);
             break;
     }
     for(unsigned int i = 0; i < distance; i++) {
