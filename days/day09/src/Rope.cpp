@@ -5,7 +5,7 @@ void Rope::moveHead(std::string input) {
     char direction = input[0];
     unsigned int distance = std::stoul(input.substr(2));
     int * val = nullptr;
-    int mult;
+    int mult = 0;
     switch (direction) {
         case 'R':
             val = &knots.front().first;
