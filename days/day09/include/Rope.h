@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <set>
 
 using Point = std::pair<int, int>;
