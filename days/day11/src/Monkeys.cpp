@@ -21,11 +21,9 @@ std::map<unsigned int, std::vector<unsigned long int>> Monkey::processRound(unsi
         m_inspections++;
         auto item = m_items.back();
         m_items.pop_back();
-        unsigned long int old_value = item;
         if (m_opcode == ADD) { item += m_operand;}
         else if (m_opcode == MULT) { item *= m_operand;}
         else if (m_opcode == SQUARE) { item *= item;}
-        assert(old_value <= item);
         item /= m_worry_divisor;
         item %= total_worry_modulus;
         unsigned int target = ((item % m_divisor) == 0) ? m_true_target : m_false_target;
