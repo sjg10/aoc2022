@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <istream>
+#include <functional>
 
 struct Point {
     unsigned int x;
@@ -15,6 +16,7 @@ public:
     unsigned int getShortestPathForward();
     unsigned int getShortestPathBackward();
 private:
+    unsigned int getShortestPath(unsigned int start_point_idx, std::function<bool(int, int)> height_test, std::function<bool(unsigned int)>  end_test);
     void addRow(std::string input);
     std::vector<Point> points;
     unsigned int start; //index of start into points

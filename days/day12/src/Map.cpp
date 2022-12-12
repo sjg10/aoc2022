@@ -28,87 +28,24 @@ void Map::addRow(std::string input) {
 }
 
 unsigned int Map::getShortestPathForward() {
-    std::vector<bool> visited(points.size(), false);
-    std::vector<unsigned int> d(points.size(), 0);
-    std::list<int> queue;
-
-    visited[start] = true;
-    queue.push_back(start);
-    unsigned int s = 0;
-
-    while(!queue.empty()) {
-        s = queue.front();
-        queue.pop_front();
-        Point p = points[s];
-        if(p.x > 0) { // left
-            unsigned int p2 = s - 1;
-            if(!visited[p2]) {
-                Point u = points[p2];
-                if (u.z <= (p.z + 1)) {
-                    d[p2] = d[s] + 1;
-                    if (p2 == end) {
-                        return d[p2];
-                    }
-                    visited[p2] = true;
-                    queue.push_back(p2);
-                }
-            }
-        } 
-        if(p.x < width - 1) { // right
-            unsigned int p2 = s + 1;
-            if(!visited[p2]) {
-                Point u = points[p2];
-                if (u.z <= (p.z + 1)) {
-                    d[p2] = d[s] + 1;
-                    if (p2 == end) {
-                        return d[p2];
-                    }
-                    visited[p2] = true;
-                    queue.push_back(p2);
-                }
-            }
-        }
-        if(p.y > 0) {
-            unsigned int p2 = s - width;
-            if(!visited[p2]) { //up
-                Point u = points[p2];
-                if (u.z <= (p.z + 1)) {
-                    d[p2] = d[s] + 1;
-                    if (p2 == end) {
-                        return d[p2];
-                    }
-                    visited[p2] = true;
-                    queue.push_back(p2);
-                }
-            }
-        }
-        if(p.y < height - 1) { // down
-            unsigned int p2 = s + width;
-            if(!visited[p2]) {
-                Point u = points[p2];
-                if (u.z <= (p.z + 1)) {
-                    d[p2] = d[s] + 1;
-                    if (p2 == end) {
-                        return d[p2];
-                    }
-                    visited[p2] = true;
-                    queue.push_back(p2);
-                }
-            }
-        }
-    }
-    assert(false); // no path was found!
-    return 0;
+    std::function<bool(int, int)> height_test = [&](int uz, int pz){ return uz <= pz + 1; };
+    std::function<bool(int)> end_test = [&](unsigned int p){ return p == end; };
+    return getShortestPath(start, height_test, end_test);
 }
-
 
 unsigned int Map::getShortestPathBackward() {
+    std::function<bool(int, int)> height_test = [&](int uz, int pz){ return uz >= pz - 1; };
+    std::function<bool(int)> end_test = [&](unsigned int p){ return points[p].z == 0; };
+    return getShortestPath(end, height_test, end_test);
+}
+
+unsigned int Map::getShortestPath(unsigned int start_point_idx, std::function<bool(int, int)> height_test, std::function<bool(unsigned int)> end_test) {
     std::vector<bool> visited(points.size(), false);
     std::vector<unsigned int> d(points.size(), 0);
     std::list<int> queue;
 
-    visited[end] = true;
-    queue.push_back(end);
+    visited[start_point_idx] = true;
+    queue.push_back(start_point_idx);
     unsigned int s = 0;
 
     while(!queue.empty()) {
@@ -119,9 +56,9 @@ unsigned int Map::getShortestPathBackward() {
             unsigned int p2 = s - 1;
             if(!visited[p2]) {
                 Point u = points[p2];
-                if (u.z >= p.z  - 1) {
+                if (height_test(u.z,p.z)) {
                     d[p2] = d[s] + 1;
-                    if (u.z == 0) {
+                    if (end_test(p2)) {
                         return d[p2];
                     }
                     visited[p2] = true;
@@ -133,9 +70,9 @@ unsigned int Map::getShortestPathBackward() {
             unsigned int p2 = s + 1;
             if(!visited[p2]) {
                 Point u = points[p2];
-                if (u.z >= p.z  - 1) {
+                if (height_test(u.z,p.z)) {
                     d[p2] = d[s] + 1;
-                    if (u.z == 0) {
+                    if (end_test(p2)) {
                         return d[p2];
                     }
                     visited[p2] = true;
@@ -147,9 +84,9 @@ unsigned int Map::getShortestPathBackward() {
             unsigned int p2 = s - width;
             if(!visited[p2]) { //up
                 Point u = points[p2];
-                if (u.z >= p.z  - 1) {
+                if (height_test(u.z,p.z)) {
                     d[p2] = d[s] + 1;
-                    if (u.z == 0) {
+                    if (end_test(p2)) {
                         return d[p2];
                     }
                     visited[p2] = true;
@@ -161,9 +98,9 @@ unsigned int Map::getShortestPathBackward() {
             unsigned int p2 = s + width;
             if(!visited[p2]) {
                 Point u = points[p2];
-                if (u.z >= p.z  - 1) {
+                if (height_test(u.z,p.z)) {
                     d[p2] = d[s] + 1;
-                    if (u.z == 0) {
+                    if (end_test(p2)) {
                         return d[p2];
                     }
                     visited[p2] = true;
@@ -175,4 +112,3 @@ unsigned int Map::getShortestPathBackward() {
     assert(false); // no path was found!
     return 0;
 }
-
