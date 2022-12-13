@@ -13,6 +13,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 include(CTest)
 enable_testing()
 find_package(GoogleTest REQUIRED)
+find_package(jsoncpp REQUIRED)
 
 # Add subdirectories
 add_subdirectory(days)
@@ -35,5 +36,6 @@ target_link_libraries(
     day10
     day11
     day12
+    day13
     # Further days go here
 )
