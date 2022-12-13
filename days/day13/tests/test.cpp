@@ -27,7 +27,7 @@ TEST(Day13Test, Part1Part2) {
     in << "\n";
     in << "[1,[2,[3,[4,[5,6,7]]]],8,9]\n";
     in << "[1,[2,[3,[4,[5,6,0]]]],8,9]\n";
-    auto ret = Day13::getSortScores();
+    auto ret = Day13::getSortScores(in);
     ASSERT_EQ(ret.first,  13);
     ASSERT_EQ(ret.second,  140);
 }
