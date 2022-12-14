@@ -1,9 +1,11 @@
 #include <chrono>
 #include <iostream>
+#include <filesystem>
 #include "Day.h"
 
 Day::Day(const std::string &input_filename) {
-    m_stream = std::ifstream(input_filename);
+    m_stream = std::ifstream("../" + input_filename);
+    std::cout << std::filesystem::current_path() << std::endl;
     if(m_stream.fail()) {throw std::runtime_error("Could not open file " + input_filename);}
 }
 
