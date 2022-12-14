@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <limits>
 #include <unordered_map>
 
 using Point = std::pair<unsigned int, unsigned int>;
 
-// Simple hash so Poinmt can be a key in unordered_map, works iff p.second < 1000;
+// Simple hash so Point can be a key in unordered_map, works iff p.second < 1000;
 namespace std
 {
     template<>
