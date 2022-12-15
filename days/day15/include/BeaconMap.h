@@ -1,10 +1,23 @@
 #pragma once
 #include <istream>
 #include <vector>
+#include <set>
 #include <memory>
 
 using Range = std::pair<int,int>;
 using Point = std::pair<int,int>;
+
+/** Ordering for non overlapping ranges */
+namespace RangeCmp {
+    struct RangeCmpStruct {
+        bool operator() (Range const & lhs, Range const & rhs) const {
+            return lhs.first < rhs.second;
+        }
+    };
+}
+
+using RangeSet = std::set<Range,  RangeCmp::RangeCmpStruct>;
+
 
 class Sensor {
 public:
@@ -26,6 +39,6 @@ public:
 private:
     // searches for missed beacon in row, throws if none found
     unsigned long int findBeaconInRows(int max, int ymin, int ymax) const; 
-    std::vector<Range> getRangesAtRow(int y) const;
+    RangeSet getRangesAtRow(int y) const;
     std::vector<std::unique_ptr<Sensor>> sensors;
 };

@@ -40,52 +40,64 @@ BeaconMap::BeaconMap(std::istream &input) {
         sensors.push_back(std::make_unique<Sensor>(readline));
     }
 }
-std::vector<Range> BeaconMap::getRangesAtRow(int y) const {
-    std::vector<Range> ranges;
-    std::list<Range> new_ranges;
+
+RangeSet BeaconMap::getRangesAtRow(int y) const {
+    RangeSet ranges;
     std::set<int> row_beacons;
     for (unsigned int i = 0; i < sensors.size(); i++) {
         int x = sensors[i]->getBeaconInRow(y);
         if(x != std::numeric_limits<int>::max()) {
             row_beacons.insert(x);
         }
-        new_ranges.push_back(sensors[i]->getRange(y));
-    }
-    while (!new_ranges.empty()) {
-        auto r = new_ranges.front();
-        new_ranges.pop_front();
-        if (r.second < r.first) {continue;} // skip invalid ranges
-        bool intersected = false;
-        for (unsigned int i = 0; i < ranges.size() && !intersected; i++) {
-            if(r.second <= ranges[i].second && r.first >= ranges[i].first) {
-                //new range contained in old
-                intersected = true;
+        auto r = sensors[i]->getRange(y);
+
+        if( r.second < r.first) {continue;}
+    
+        bool toadd = true;
+        for (auto itr = ranges.cbegin(); itr != ranges.cend();) {
+            if(r.second < itr->first) {
+                // as set is ordered we are done with the loop
+                break;
             }
-            else if (r.second > ranges[i].second && r.first < ranges[i].first ) {
-                // old range contained in new range
-                new_ranges.push_back(std::make_pair(r.first, ranges[i].first  - 1));
-                new_ranges.push_back(std::make_pair(ranges[i].second + 1, r.second));
-                intersected = true;
+            else if(r.second <= itr->second && r.first >= itr->first) {
+                //(r is contained in another range, so we are done)
+                toadd = false;
+                break;
             }
-            else if (r.first <= ranges[i].second  && r.first >= ranges[i].first ) {
-                //left of new range intersects
-                new_ranges.push_back(std::make_pair(ranges[i].second + 1, r.second));
-                intersected = true;
+            else if(itr->second <= r.second && itr->first >= r.first) { 
+                // this range is contained in r, so throw it out and continue
+                itr = ranges.erase(itr);
             }
-            else if (r.second >= ranges[i].first && r.second <= ranges[i].second) {
-                //right of new range intersects
-                new_ranges.push_back(std::make_pair(r.first, ranges[i].first - 1));
-                intersected = true;
+            else { 
+                auto r2 = *itr;
+                bool modified = false;
+                if (r.second >= r2.first && r.second <= r2.second) {
+                    //right of new range intersects 
+                    r.second = r2.second;
+                    modified = true;
+                }
+                if (r.first <= r2.second  && r.first >= r2.first ) {
+                    //left of new range intersects
+                    r.first = r2.first,
+                    modified = true;
+                }
+                if(modified) {
+                    itr = ranges.erase(itr);
+                }
+                else {
+                    itr++;
+                }
             }
         }
-        if (!intersected) {
-            ranges.push_back(r);
+        if (toadd) {
+            ranges.insert(r);
         }
     }
     return ranges;
 }
+
 unsigned int BeaconMap::getRowPositions(int y) const {
-    std::vector<Range> ranges = getRangesAtRow(y);
+    auto ranges = getRangesAtRow(y);
     std::set<int> row_beacons;
     for (unsigned int i = 0; i < sensors.size(); i++) {
         int x = sensors[i]->getBeaconInRow(y);
@@ -94,8 +106,8 @@ unsigned int BeaconMap::getRowPositions(int y) const {
         }
     }
     unsigned int ret = 0;
-    for (unsigned int j = 0; j < ranges.size(); j++) {
-        ret += (ranges[j].second - ranges[j].first) + 1;
+    for(auto const &range: ranges) {
+        ret += (range.second - range.first) + 1;
     }
     return ret - row_beacons.size();
 }
@@ -103,23 +115,21 @@ unsigned int BeaconMap::getRowPositions(int y) const {
 unsigned long int BeaconMap::findBeaconInRows(int max, int ymin, int ymax) const {
     for(int y = ymin; y <= ymax; y++) {
         auto ranges = getRangesAtRow(y);
-        std::sort(ranges.begin(), ranges.end(), 
-        [](const Range & a, const Range & b){ 
-            return a.first < b.second; 
-        });
-        if (ranges[0].first > 0) { 
-            long int x = ranges[0].first - 1; 
+        if (ranges.begin()->first > 0) { 
+            long int x = ranges.begin()->first - 1; 
             return (x * 4000000L) + y;
         }
-        for (unsigned int i = 0; i < ranges.size() - 1; i++) {
-            if (ranges[i].second > max) break;
-            else if (ranges[i+1].first != ranges[i].second + 1) {
-                long int x = ranges[i].second + 1;
+        for (auto itr = ranges.begin(); itr != ranges.end(); itr++) {
+            auto nxt = itr;
+            nxt++;
+            if (itr->second > max) break;
+            else if (nxt->first != itr->second + 1) {
+                long int x = itr->second + 1;
                 return (x * 4000000L) + y;
             }
         }
-        if (ranges.back().second < max) {
-            long int x = ranges.back().second + 1;
+        if (ranges.rbegin()->second < max) {
+            long int x = ranges.rbegin()->second + 1;
             return (x * 4000000L) + y;
         }
     }
