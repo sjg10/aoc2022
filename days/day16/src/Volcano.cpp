@@ -5,6 +5,7 @@
 #include <list>
 #include <iostream>
 #include <limits>
+#include <future>
 
 
 void Volcano::addRoom(std::string &in) {
@@ -86,12 +87,15 @@ unsigned int Volcano::getBestElephantPressure() {
     std::vector<std::string> ordered_rooms(rooms_to_visit.begin(), rooms_to_visit.end());
     std::vector<bool> include_my_room(rooms_to_visit.size(), false);
     std::fill(include_my_room.end() - rooms_to_visit.size() / 2, include_my_room.end(), true);
-    do {
+
+    const unsigned int threads = std::thread::hardware_concurrency();
+
+    auto runner = [&] (std::vector<bool> v) {
         std::set<std::string> my_rooms = {"AA"};
         std::set<std::string> elephant_rooms = {"AA"};
         unsigned int j = 0;
         for(auto room = rooms_to_visit.cbegin(); room != rooms_to_visit.cend(); room++, j++) {
-            if (include_my_room[j]) {
+            if (v[j]) {
                 my_rooms.insert(*room);
             }
             else {
@@ -100,8 +104,22 @@ unsigned int Volcano::getBestElephantPressure() {
         }
         unsigned int res1 = getBestRoute("AA", my_rooms, 0, 26);
         unsigned int res2 = getBestRoute("AA", elephant_rooms, 0, 26);
-        if ((res1 + res2) > max) { max = res1 + res2;}
-    } while (std::next_permutation(include_my_room.begin(), include_my_room.end()));
+        return res1 + res2;
+    };
+
+    bool cont = true;
+    do {
+        std::vector<std::future<unsigned int>> futures;
+        for(long int ystep = 0; ystep < threads && cont; ystep++) {
+            futures.emplace_back(std::async(std::launch::async,
+                                    runner, include_my_room));
+            cont = std::next_permutation(include_my_room.begin(), include_my_room.end());
+        }
+        for (auto &f : futures) {
+            auto res = f.get();
+            if (res > max) {max = res;}
+        }
+    } while (cont);
     return max;
 }
 
