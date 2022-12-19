@@ -1,7 +1,7 @@
 #include "CubeMap.h"
 #include <regex>
 #include <cassert>
-#include <iostream>
+#include <limits>
 #include <list>
 
 void CubeMap::addFace(Face f) {
