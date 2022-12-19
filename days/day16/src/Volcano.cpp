@@ -47,7 +47,7 @@ void Volcano::getShortestPaths(std::string start_point) {
     while(!queue.empty()) {
         s = queue.front();
         queue.pop_front();
-        for(auto const n : m_neighbours[s]) {
+        for(auto const &n : m_neighbours[s]) {
             if(!visited[n]) {
                 d[n] = d[s] + 1;
                 visited[n] = true;
