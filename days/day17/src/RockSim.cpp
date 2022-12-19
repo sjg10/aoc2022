@@ -98,18 +98,27 @@ RockSim::RockSim(std::string &jetpattern) {
 }
 
 bool RockSim::adjustFloor() {
-    const int maxheight = 38;
+    /*const int maxheight = 38;
     if(m_map.size() > maxheight) { // found heuristically
         unsigned int floors = m_map.size() - maxheight;
         m_floor_offset += floors;
         m_map.erase(m_map.begin(), m_map.begin() + floors);
-    }
+    }*//*
+    auto newfloor = std::vector<bool>(WIDTH, true);
+    auto f = std::find(m_map.rbegin(), m_map.rend(), newfloor);
+    if (f != m_map.rend()) {
+        //new floor
+        unsigned int removed_floors = (m_map.rend() - f);
+        m_floor_offset += removed_floors;
+        m_map.erase(m_map.begin(), m_map.begin() + removed_floors);
+        //std::cout << m_next_rock_type << " " << m_jetlevel << std::endl;
+        if(m_next_rock_type == 0 && m_jetlevel == 0) { std::cout << "RECURSE " << m_floor_offset << std::endl; return true;}
+    }*/
     return false;
 }
 
 void RockSim::run(unsigned long int rocks) {
     for (unsigned long int i =0; i < rocks; i++) {
-        m_floor_offset++;
         std::unique_ptr<Rock> rock = std::make_unique<Rock>(m_map.size(), m_next_rock_type);
         m_next_rock_type++;
         m_next_rock_type %= 5;
