@@ -97,13 +97,9 @@ RockSim::RockSim(std::string &jetpattern) {
     }
 }
 
+
+
 bool RockSim::adjustFloor() {
-    /*const int maxheight = 38;
-    if(m_map.size() > maxheight) { // found heuristically
-        unsigned int floors = m_map.size() - maxheight;
-        m_floor_offset += floors;
-        m_map.erase(m_map.begin(), m_map.begin() + floors);
-    }*//*
     auto newfloor = std::vector<bool>(WIDTH, true);
     auto f = std::find(m_map.rbegin(), m_map.rend(), newfloor);
     if (f != m_map.rend()) {
@@ -111,9 +107,25 @@ bool RockSim::adjustFloor() {
         unsigned int removed_floors = (m_map.rend() - f);
         m_floor_offset += removed_floors;
         m_map.erase(m_map.begin(), m_map.begin() + removed_floors);
-        //std::cout << m_next_rock_type << " " << m_jetlevel << std::endl;
-        if(m_next_rock_type == 0 && m_jetlevel == 0) { std::cout << "RECURSE " << m_floor_offset << std::endl; return true;}
-    }*/
+        auto a = std::make_pair(m_next_rock_type, m_jetlevel);
+        if(!m_floor_repeat_found) {
+            auto itr = std::find(m_detected_floor_level.begin(),m_detected_floor_level.end(),a);
+            if(itr != m_detected_floor_level.end()) {
+                m_floor_repeat_found = true;
+                auto i = itr - m_detected_floor_level.begin();
+                rocks_fallen_reset_1 = m_floor_level_rock_counts[i];
+                rocks_fallen_reset_1_floors = m_floor_level_heights[i];
+                rocks_fallen_reset_2 = m_total_steps_run;
+                rocks_fallen_reset_2_floors = m_floor_offset;
+                return true;
+            }
+            else {
+                m_detected_floor_level.push_back(a);
+                m_floor_level_heights.push_back(m_floor_offset);
+                m_floor_level_rock_counts.push_back(m_total_steps_run);
+            }
+        }
+    }
     return false;
 }
 
@@ -129,19 +141,13 @@ void RockSim::run(unsigned long int rocks) {
             m_jetlevel %= m_jetpattern.size();
             fell = rock->move(*this, Direction::DOWN);
         } while(fell);
+        m_total_steps_run++;
+        if(adjustFloor()) {
+            unsigned long int x = (rocks_fallen_reset_2 - rocks_fallen_reset_1);
+            while((i + x) < rocks) {
+                i += x;
+                m_floor_offset += (rocks_fallen_reset_2_floors - rocks_fallen_reset_1_floors);
+            }
+        };
     }
-}
-
-std::ostream& operator<<(std::ostream& os, const RockSim& rs) {
-    for(auto itr = rs.m_map.rbegin(); itr != rs.m_map.rend(); itr++) {
-        os <<"|";
-        for(auto const &x : *itr) {
-            if (x) os <<"#";
-            else os << ".";
-        }
-        os <<"|";
-        os << std::endl;
-    }
-    os << "+-------+" << std::endl;
-    return os;
 }
