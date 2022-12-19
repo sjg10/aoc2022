@@ -39,6 +39,7 @@ std::vector<std::pair<std::string, std::shared_ptr<Day>>> days = {
     {"Day15", std::make_shared<Day15>("../res/day15.txt")},
     {"Day16", std::make_shared<Day16>("../res/day16.txt")},
     {"Day18", std::make_shared<Day18>("../res/day18.txt")},
+    {"Day19", std::make_shared<Day19>("../res/day19.txt")},
     //Further days go here
 };
 
