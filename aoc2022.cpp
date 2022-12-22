@@ -21,6 +21,7 @@
 #include "Day19.h"
 #include "Day20.h"
 #include "Day21.h"
+#include "Day22.h"
 //Further day includes go here
 #include <iostream>
 
